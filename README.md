@@ -1,36 +1,242 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🛍️ NextMart
 
-## Getting Started
+A modern, beginner-friendly e-commerce application built with **Next.js 15**, **TypeScript**, **MongoDB**, and **Next.js API Routes**. This project demonstrates how to build a full-stack application using the App Router, secure authentication, protected routes, and CRUD operations while following a clean and scalable architecture.
 
-First, run the development server:
+---
+
+## 🚀 Features
+
+- ⚡ Next.js 15 App Router
+- 🔷 TypeScript
+- 🎨 Tailwind CSS
+- 🧩 shadcn/ui Components
+- 🗄️ MongoDB (Native Driver)
+- 🔌 Next.js API Routes
+- 🔐 JWT Authentication
+- 🍪 HTTP-only Cookie Authentication
+- 🛡️ Protected Routes using Middleware
+- 📦 Product CRUD API
+- 🛒 Product Listing
+- 📄 Product Details
+- ➕ Create Product (Protected)
+- ✏️ Manage Products (Protected)
+- 📱 Fully Responsive Design
+- 📂 Clean Folder Structure
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+- Next.js 15
+- React
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
+- Lucide React
+
+### Backend
+
+- Next.js API Routes
+- MongoDB Native Driver
+- JWT
+- bcryptjs
+
+---
+
+## 📁 Project Structure
+
+```text
+src
+│
+├── app
+│   ├── api
+│   │   ├── login
+│   │   ├── logout
+│   │   ├── me
+│   │   └── products
+│   │       └── [id]
+│   │
+│   ├── products
+│   │   ├── create
+│   │   ├── manage
+│   │   └── [id]
+│   │
+│   ├── login
+│   ├── signup
+│   └── about
+│
+├── components
+│
+├── providers
+│   └── AuthProvider.tsx
+│
+├── hooks
+│   └── useAuth.ts
+│
+├── lib
+│   └── mongoConnect.ts
+│
+├── types
+│
+└── middleware.ts
+```
+
+---
+
+## 🔐 Authentication
+
+Authentication is implemented using:
+
+- JWT
+- HTTP-only Cookies
+- bcrypt Password Hashing
+- Protected Routes with Next.js Middleware
+
+Authentication flow:
+
+```text
+User Login
+      │
+      ▼
+API Route (/api/login)
+      │
+      ▼
+Verify Credentials
+      │
+      ▼
+Generate JWT
+      │
+      ▼
+Store HTTP-only Cookie
+      │
+      ▼
+Protected Pages & APIs
+```
+
+---
+
+## 📦 Product APIs
+
+| Method | Endpoint            | Description        |
+| ------ | ------------------- | ------------------ |
+| GET    | `/api/products`     | Get all products   |
+| GET    | `/api/products/:id` | Get single product |
+| POST   | `/api/products`     | Create product     |
+| PUT    | `/api/products/:id` | Update product     |
+| DELETE | `/api/products/:id` | Delete product     |
+
+---
+
+## 🔒 Protected Routes
+
+The following routes require authentication:
+
+- `/products/create`
+- `/products/manage`
+
+Protection is handled using **Next.js Middleware**.
+
+---
+
+## ⚙️ Environment Variables
+
+Create a `.env.local` file.
+
+```env
+MONGODB_URI=your_mongodb_connection_string
+DATABASE_NAME=nextmart
+JWT_SECRET=your_secret_key
+```
+
+---
+
+## 📥 Installation
+
+Clone the repository.
+
+```bash
+git clone <repository-url>
+```
+
+Navigate to the project.
+
+```bash
+cd nextmart
+```
+
+Install dependencies.
+
+```bash
+npm install
+```
+
+Run the development server.
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 📚 Learning Objectives
 
-To learn more about Next.js, take a look at the following resources:
+This project helps you learn:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Next.js App Router
+- TypeScript Fundamentals
+- MongoDB CRUD Operations
+- RESTful API Development
+- Authentication with JWT
+- HTTP-only Cookie Sessions
+- Next.js Middleware
+- Protected Routes
+- React Context API
+- Custom Hooks
+- Server and Client Components
+- Folder Organization
+- Clean Architecture
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 📈 Future Improvements
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Product Search
+- Category Filtering
+- Shopping Cart
+- Wishlist
+- Checkout Flow
+- Order Management
+- User Dashboard
+- Admin Dashboard
+- Image Upload
+- Pagination
+- Product Reviews
+- Payment Gateway Integration
+- Email Verification
+- Password Reset
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🤝 Contributing
+
+Contributions are welcome.
+
+1. Fork the repository.
+2. Create a feature branch.
+3. Commit your changes.
+4. Push your branch.
+5. Open a Pull Request.
+
+---
+
+## 📄 License
+
+This project is intended for educational purposes and is open for learning, modification, and experimentation.
