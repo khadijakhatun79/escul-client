@@ -2,7 +2,7 @@ import { mongoConnect } from "@/lib/mongoConnect";
 import { ObjectId } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
 
-// Get Product by ID
+// Get course by ID
 export async function GET(
   req: NextRequest,
   context: { params: Promise<{ id: string }> },
@@ -12,38 +12,38 @@ export async function GET(
 
     const { db } = await mongoConnect();
 
-    const product = await db
-      .collection("products")
+    const course = await db
+      .collection("courses")
       .findOne({ _id: new ObjectId(id) });
 
-    if (!product) {
-      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    if (!course) {
+      return NextResponse.json({ error: "course not found" }, { status: 404 });
     }
 
-    const formattedProduct = {
-      id: product._id.toString(),
-      title: product.title,
-      description: product.description,
-      image: product.image,
-      category: product.category,
-      price: product.price,
-      rating: product.rating,
-      stock: product.stock,
-      featured: product.featured,
+    const formattedcourse = {
+      id: course._id.toString(),
+      title: course.title,
+      description: course.description,
+      image: course.image,
+      category: course.category,
+      price: course.price,
+      rating: course.rating,
+      stock: course.stock,
+      featured: course.featured,
     };
 
-    return NextResponse.json(formattedProduct);
+    return NextResponse.json(formattedcourse);
   } catch (error) {
     console.error(error);
 
     return NextResponse.json(
-      { error: "Failed to fetch product" },
+      { error: "Failed to fetch course" },
       { status: 500 },
     );
   }
 }
 
-// Update Product
+// Update course
 export async function PUT(
   req: NextRequest,
   context: { params: Promise<{ id: string }> },
@@ -55,7 +55,7 @@ export async function PUT(
 
     const { db } = await mongoConnect();
 
-    const result = await db.collection("products").updateOne(
+    const result = await db.collection("courses").updateOne(
       {
         _id: new ObjectId(id),
       },
@@ -65,23 +65,23 @@ export async function PUT(
     );
 
     if (result.matchedCount === 0) {
-      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+      return NextResponse.json({ error: "course not found" }, { status: 404 });
     }
 
     return NextResponse.json({
-      message: "Product updated successfully",
+      message: "course updated successfully",
     });
   } catch (error) {
     console.error(error);
 
     return NextResponse.json(
-      { error: "Failed to update product" },
+      { error: "Failed to update course" },
       { status: 500 },
     );
   }
 }
 
-// Delete Product
+// Delete course
 export async function DELETE(
   req: NextRequest,
   context: { params: Promise<{ id: string }> },
@@ -91,22 +91,22 @@ export async function DELETE(
 
     const { db } = await mongoConnect();
 
-    const result = await db.collection("products").deleteOne({
+    const result = await db.collection("courses").deleteOne({
       _id: new ObjectId(id),
     });
 
     if (result.deletedCount === 0) {
-      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+      return NextResponse.json({ error: "course not found" }, { status: 404 });
     }
 
     return NextResponse.json({
-      message: "Product deleted successfully",
+      message: "course deleted successfully",
     });
   } catch (error) {
     console.error(error);
 
     return NextResponse.json(
-      { error: "Failed to delete product" },
+      { error: "Failed to delete course" },
       { status: 500 },
     );
   }

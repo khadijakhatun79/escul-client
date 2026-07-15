@@ -1,43 +1,43 @@
 import { mongoConnect } from "@/lib/mongoConnect";
-import { TProduct } from "@/types/product";
+import { TCourse } from "@/types/course";
 import { NextRequest, NextResponse } from "next/server";
 
-// GET all products
+// GET all courses
 export async function GET() {
   try {
     const { db } = await mongoConnect();
 
-    const products = await db.collection("products").find().toArray();
+    const courses = await db.collection("courses").find().toArray();
 
-    const formattedProducts = products.map((product) => ({
-      id: product._id.toString(),
-      title: product.title,
-      description: product.description,
-      category: product.category,
-      image: product.image,
-      price: product.price,
-      rating: product.rating,
-      stock: product.stock,
-      featured: product.featured,
+    const formattedcourses = courses.map((course) => ({
+      id: course._id.toString(),
+      title: course.title,
+      description: course.description,
+      category: course.category,
+      image: course.image,
+      price: course.price,
+      rating: course.rating,
+      stock: course.stock,
+      featured: course.featured,
     }));
 
-    return NextResponse.json(formattedProducts);
+    return NextResponse.json(formattedcourses);
   } catch (error) {
     console.error(error);
 
     return NextResponse.json(
-      { error: "Failed to fetch products" },
+      { error: "Failed to fetch courses" },
       { status: 500 },
     );
   }
 }
 
-// POST new product
+// POST new course
 export async function POST(req: NextRequest) {
   try {
     const { db } = await mongoConnect();
 
-    const data: TProduct = await req.json();
+    const data: Tcourse = await req.json();
 
     // Basic validation
     if (!data.title || !data.category || !data.price || !data.image) {
@@ -49,14 +49,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const result = await db.collection("products").insertOne({
+    const result = await db.collection("courses").insertOne({
       ...data,
       createdAt: new Date(),
     });
 
     return NextResponse.json(
       {
-        message: "Product created successfully.",
+        message: "course created successfully.",
         id: result.insertedId,
       },
       {
@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
     console.error(error);
 
     return NextResponse.json(
-      { error: "Failed to create product." },
+      { error: "Failed to create course." },
       { status: 500 },
     );
   }
