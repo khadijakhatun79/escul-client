@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
   try {
     const { db } = await mongoConnect();
 
-    const data: Tcourse = await req.json();
+    const data: TCourse = await req.json();
 
     // Basic validation
     if (!data.title || !data.category || !data.price || !data.image) {
