@@ -39,36 +39,35 @@ export async function POST(req: NextRequest) {
 
     const data: TCourse = await req.json();
 
-    // Basic validation
     if (!data.title || !data.category || !data.price || !data.image) {
       return NextResponse.json(
         {
           error: "Title, category, price, and image are required.",
         },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
+    const { _id, id, ...courseData } = data;
+
     const result = await db.collection("courses").insertOne({
-      ...data,
+      ...courseData,
       createdAt: new Date(),
     });
 
     return NextResponse.json(
       {
-        message: "course created successfully.",
-        id: result.insertedId,
+        message: "Course created successfully.",
+        id: result.insertedId.toString(),
       },
-      {
-        status: 201,
-      },
+      { status: 201 }
     );
   } catch (error) {
     console.error(error);
 
     return NextResponse.json(
       { error: "Failed to create course." },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
