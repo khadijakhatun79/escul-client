@@ -13,7 +13,7 @@ export default function CoursesSection() {
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4;
+  const itemsPerPage = 3;
 
   useEffect(() => {
     async function fetchCourses() {
@@ -76,40 +76,52 @@ export default function CoursesSection() {
   }
 
   return (
-    <section className="container mx-auto py-20">
-      <div className="mb-12 flex items-center justify-between">
+    <section className="relative overflow-hidden py-20">
+  <Image
+    src="/assets/hero_bg_2_1.jpg"
+    alt="Background"
+    fill
+    className="-z-10 object-cover"
+  />
+  <div className="container mx-auto">
+      <div className="mb-12 flex items-center justify-center text-center">
         <div>
-          <h2 className="text-3xl font-bold">Featured Courses</h2>
+           <div className="mb-5 flex items-center justify-center gap-2 text-sm font-semibold uppercase tracking-widest text-[#1CB098]">
+                                    <Image
+                                      src="/assets/subtitle-1.svg"
+                                      alt=""
+                                      width={18}
+                                      height={18}
+                                    />
+                                    Our Courses
+                                  </div>
+          <h2 className="text-5xl font-bold">Featured Courses</h2>
 
-          <p className="mt-2 text-muted-foreground">
-            Explore our featured courses.
-          </p>
         </div>
 
-        <Button variant="outline" asChild>
-          <Link href="/courses">
-            View All
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Link>
-        </Button>
+        
       </div>
 
-      <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-        {currentCourses.map((course: any) => (
+      <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        {currentCourses.map((course) => (
           <div
             key={course._id}
-            className="group overflow-hidden rounded-xl border bg-background transition-all hover:shadow-xl"
+            className="group overflow-hidden rounded-xl border border-[#E5E5E5] bg-white transition-all hover:shadow-xl  p-[24px]"
           >
-            <div className="relative aspect-video overflow-hidden">
+            <div className="relative aspect-video overflow-hidden rounded-xl">
               <Image
                 src={course.image}
                 alt={course.title}
                 fill
                 className="object-cover transition-transform duration-300 group-hover:scale-105"
               />
+               <span className="text-2xl font-bold bg-white text-[#1CB098] absolute bottom-0 left-0 pt-2 pr-6 rounded-tr-3xl">
+                  ${course.price}
+                </span>
             </div>
+           
 
-            <div className="space-y-4 p-5">
+            <div className="space-y-4 pt-4">
               <span className="text-sm font-medium text-primary">
                 {course.category}
               </span>
@@ -117,25 +129,22 @@ export default function CoursesSection() {
               <h3 className="line-clamp-2 text-xl font-semibold">
                 {course.title}
               </h3>
+              <div className="flex items-center gap-1">
+                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                  <span>{course.rating}</span>
+                </div>
 
               <p className="line-clamp-3 text-sm text-muted-foreground">
                 {course.description}
               </p>
 
-              <div className="flex items-center justify-between">
-                <span className="text-2xl font-bold">
-                  ${course.price}
-                </span>
 
-                <div className="flex items-center gap-1">
-                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                  <span>{course.rating}</span>
-                </div>
-              </div>
-
-              <Button className="w-full" asChild>
+              <Button className="rounded-full uppercase bg-[#1CB098] px-8 py-7 text-white hover:bg-[#000]" asChild >
                 <Link href={`/courses/${course._id}`}>
-                  <BookOpen className="mr-2 h-4 w-4" />
                   View Details
                 </Link>
               </Button>
@@ -168,6 +177,7 @@ export default function CoursesSection() {
           </Button>
         </div>
       )}
-    </section>
+      </div>
+    </section> 
   );
 }

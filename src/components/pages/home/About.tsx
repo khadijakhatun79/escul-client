@@ -88,7 +88,7 @@ export default function AboutSection() {
 
             <Link
               href="/about"
-              className="mt-10 inline-flex items-center gap-2 rounded-full bg-[#00B67A] px-8 py-4 font-semibold text-white transition hover:bg-[#009966]"
+              className="mt-10 inline-flex items-center gap-2 rounded-full bg-[#1CB098] px-8 py-4 font-semibold text-white transition hover:bg-[#000]"
             >
               GET STARTED
               <ArrowRight size={18} />

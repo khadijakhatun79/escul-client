@@ -1,185 +1,334 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { useAuth } from "@/hooks/useAuth";
-import NextImage from "next/image";
-import { Calendar, Menu } from "lucide-react"; 
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 
+import {
+  Menu,
+  X,
+  User,
+  LogOut,
+  LayoutDashboard,
+} from "lucide-react";
+
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Header() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
   const router = useRouter();
-  const { user, logout } = useAuth();
+const { user, logout } = useAuth();
 
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [role, setRole] = useState("");
 
- const menuItems = [
-  { title: "Home", url: "/" },
-  { title: "Courses", url: "/courses" },
-  { title: "About", url: "/about" },
-  { title: "Contact", url: "/contact" },
+// Get User Role
+useEffect(() => {
+  const getRole = async () => {
+    try {
+      if (!user?.email) return;
 
-  ...(user?.role === "student"
-  ? [
-      { title: "Dashboard", url: "/dashboard/student" },
-      { title: "My Courses", url: "/my-courses" },
-      { title: "Profile", url: "/profile" },
-    ]
-  : []),
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/users/${user.email}`
+      );
 
-...(user?.role === "instructor"
-  ? [
-      { title: "Dashboard", url: "/dashboard/instructor" },
-      { title: "Create Course", url: "/courses/create" },
-      { title: "Profile", url: "/profile" },
-    ]
-  : []),
+      const data = await res.json();
 
-...(user?.role === "admin"
-  ? [
-      { title: "Dashboard", url: "/dashboard/admin" },
-      { title: "Manage Users", url: "/dashboard/users" },
-      { title: "Manage Courses", url: "/dashboard/courses" },
-    ]
-  : []),
-];
-
-  const handleNavigation = (url: string) => {
-    router.push(url);
-    setMobileOpen(false);
+      setRole(data?.role?.toLowerCase() || "");
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const handleLogoutClick = () => {
-    setMobileOpen(false);
-    logout();
+  getRole();
+}, [user]);
+
+// Navbar Scroll Effect
+useEffect(() => {
+  const handleScroll = () => {
+    setScrolled(window.scrollY > 50);
   };
+
+  handleScroll();
+
+  window.addEventListener("scroll", handleScroll);
+
+  return () => {
+    window.removeEventListener("scroll", handleScroll);
+  };
+}, []);
+ const handleLogout = () => {
+  logout();
+  router.push("/");
+};
+
+ const getDashboardRoute = () => {
+  switch (role) {
+    case "admin":
+      return "/dashboard/admin";
+
+    case "instructor":
+      return "/dashboard/instructor";
+
+    default:
+      return "/dashboard/student";
+  }
+};
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
-      <div className="container flex h-16 items-center justify-between px-4">
-        {/* Logo */}
-        <button
-          onClick={() => handleNavigation("/")}
-          className="flex items-center gap-2 font-semibold text-xl hover:opacity-80 transition-opacity"
-        >
-          <NextImage
-            src="/assets/logo.svg"
-            alt="Escul Logo"
-            width={30}
-            height={24}
+   <nav
+  className={` w-full z-[9999] transition-all duration-300 ${
+    scrolled
+      ? "bg-[#00001b]/95 backdrop-blur-md shadow-lg py-2"
+      : "bg-transparent py-4"
+  }`}
+>
+      <div className="max-w-7xl mx-auto px-4 flex justify-between items-center h-16">
+
+        {/* LOGO */}
+        <Link href="/" className="flex items-center gap-2">
+         <Image
+          src="/assets/logo.svg" 
+          width={24}
+          height={24}
+          style={{ height: "auto" }} alt="logo"
           />
-          <span>Escul</span>
-        </button>
+          <span className="font-extrabold text-2xl text-black">
+  Escul
+</span>
+        </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6">
-          {menuItems.map((item) => (
-            <Link href={item.url} key={item.url}>
-              <button className="text-sm font-medium transition-colors hover:text-primary">
-                {item.title}
-              </button>
+        {/* DESKTOP MENU */}
+       <div className="hidden md:flex items-center gap-8 text-black font-medium">
+          <Link href="/">Home</Link>
+
+          <Link href="/courses">Courses</Link>
+
+          <Link href="/instructors">Instructors</Link>
+
+          <Link href="/about">About</Link>
+
+          <Link href="/contact">Contact</Link>
+
+          {user && (
+            <Link href={getDashboardRoute()}>
+              Dashboard
             </Link>
-          ))}
-        </nav>
-
-        {/* Desktop Auth Buttons */}
-        <div className="hidden md:flex items-center gap-3">
-          {user ? (
-            <>
-              <div className="text-sm text-muted-foreground">{user.email}</div>
-              <Button onClick={handleLogoutClick} size="sm">
-                Logout
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button
-                variant="outline"
-                onClick={() => handleNavigation("/signup")}
-                size="sm"
-              >
-                Sign Up
-              </Button>
-              <Button onClick={() => handleNavigation("/login")} size="sm">
-                Login
-              </Button>
-            </>
           )}
         </div>
 
-        {/* Mobile Menu */}
-        <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-          <SheetTrigger className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-md hover:bg-accent">
-          <Menu className="h-5 w-5" />
-        </SheetTrigger>
-          <SheetContent side="right" className="w-75">
-            <SheetHeader>
-              <SheetTitle className="flex items-center gap-2">
-                <Calendar className="h-5 w-5" />
-                EventHub
-              </SheetTitle>
-            </SheetHeader>
-            <div className="flex flex-col gap-4 mt-8">
-              {/* Mobile Navigation */}
-              <nav className="flex flex-col gap-2">
-                {menuItems.map((item) => (
-                  <Link href={item.url} key={item.url}>
-                    <button className="text-left px-3 py-2 rounded-md hover:bg-accent transition-colors">
-                      {item.title}
-                    </button>
-                  </Link>
-                ))}
-              </nav>
+        {/* AUTH SECTION */}
+        <div className=" md:flex items-center gap-4">
 
-              {/* Mobile Auth Buttons */}
-              <div className="flex flex-col gap-2 pt-4 border-t">
-                {user ? (
-                  <>
-                    <div className="px-3 py-2 text-sm text-muted-foreground">
-                      <div className="font-medium text-foreground">
-                        {user.email}
-                      </div>
-                      <div className="text-xs">{user.email}</div>
-                    </div>
-                    <Button
-                      onClick={handleLogoutClick}
-                      variant="outline"
-                      className="w-full"
-                    >
-                      Logout
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button
-                      onClick={() => handleNavigation("/login")}
-                      variant="outline"
-                      className="w-full"
-                    >
-                      Login
-                    </Button>
-                    <Button
-                      onClick={() => handleNavigation("/signup")}
-                      className="w-full"
-                    >
-                      Sign Up
-                    </Button>
-                  </>
-                )}
+          {!user ? (
+            <>
+              <Link href="/login"><button className="text-white">Login</button></Link>
+
+              <Link href="/register">
+                <button className="bg-[#132573] text-white rounded-full px-6">
+                 Join Us
+                </button>
+              </Link>
+            </>
+          ) : (
+            <div className="relative group">
+
+              {/* USER */}
+             <div className="flex items-center gap-2 cursor-pointer">
+              <Image
+              src={user?.image || "/assets/avatar.png"}
+              width={35}
+              height={35}
+              alt="user"
+              className="rounded-full"
+            />
+
+            <span className="text-white text-sm font-medium">
+              {user?.name}
+            </span>
+            </div>
+
+              {/* DROPDOWN */}
+              <div className="absolute right-0 top-6 hidden group-hover:flex flex-col bg-white shadow-xl rounded-xl w-52 overflow-hidden">
+
+             
+
+                <Link
+                  href={getDashboardRoute()}
+                  className="px-4 py-3 flex items-center gap-2 hover:bg-gray-100"
+                >
+                  <LayoutDashboard size={16} />
+                  Dashboard
+                </Link>
+                <Link
+                  href="/profile"
+                  className="block px-4 py-3 text-base font-medium text-slate-900 hover:bg-slate-50 rounded-xl"
+                >
+                  Profile
+                </Link>
+
+                <button
+                  onClick={handleLogout}
+                  className="px-4 py-3 flex items-center gap-2 text-red-500 hover:bg-red-50 text-left"
+                >
+                  <LogOut size={16} />
+                  Logout
+                </button>
+
               </div>
             </div>
-          </SheetContent>
-        </Sheet>
+          )}
+        </div>
+
+        {/* MOBILE BUTTON */}
+        <button
+  onClick={() => setIsMenuOpen(!isMenuOpen)}
+  className="md:hidden w-11 h-11 flex items-center justify-center rounded-xl bg-[#132573] text-white shadow-lg"
+>
+  {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
+</button>
       </div>
-    </header>
+
+      {/* MOBILE MENU */}
+     {isMenuOpen && (
+  <div className="md:hidden absolute top-full left-0 w-full bg-white shadow-2xl border-t border-slate-100 rounded-b-3xl overflow-hidden animate-in slide-in-from-top duration-300">
+
+    {/* User Info */}
+        {user && (
+          <div className="p-5 bg-slate-50 border-b border-slate-100">
+            <div className="flex items-center gap-3">
+              <Image
+                src="/assets/avatar.png"
+                width={50}
+                height={50}
+                alt="user"
+                className="rounded-full border-2 border-[#132573]"
+              />
+
+              <div>
+                <h4 className="font-semibold text-slate-900">
+                  {user.name}
+                </h4>
+
+                <p className="text-xs text-slate-500">
+                  {user.email}
+                </p>
+
+                <p className="text-xs text-blue-600 capitalize">
+                  {role}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+    {/* Navigation */}
+    <div className="p-4 space-y-2">
+
+  <Link
+    href="/"
+    onClick={() => setIsMenuOpen(false)}
+    className="flex items-center px-4 py-3 rounded-xl hover:bg-slate-100"
+  >
+    Home
+  </Link>
+
+  <Link
+    href="/courses"
+    onClick={() => setIsMenuOpen(false)}
+    className="flex items-center px-4 py-3 rounded-xl hover:bg-slate-100"
+  >
+    Courses
+  </Link>
+
+  <Link
+    href="/instructors"
+    onClick={() => setIsMenuOpen(false)}
+    className="flex items-center px-4 py-3 rounded-xl hover:bg-slate-100"
+  >
+    Instructors
+  </Link>
+
+  <Link
+    href="/about"
+    onClick={() => setIsMenuOpen(false)}
+    className="flex items-center px-4 py-3 rounded-xl hover:bg-slate-100"
+  >
+    About
+  </Link>
+
+  <Link
+    href="/contact"
+    onClick={() => setIsMenuOpen(false)}
+    className="flex items-center px-4 py-3 rounded-xl hover:bg-slate-100"
+  >
+    Contact
+  </Link>
+
+  {user && (
+    <>
+      <Link
+        href={getDashboardRoute()}
+        onClick={() => setIsMenuOpen(false)}
+        className="flex items-center gap-2 px-4 py-3 rounded-xl bg-blue-50 text-blue-700"
+      >
+        <LayoutDashboard size={18} />
+        Dashboard
+      </Link>
+
+      <Link
+        href="/profile"
+        onClick={() => setIsMenuOpen(false)}
+        className="flex items-center gap-2 px-4 py-3 rounded-xl hover:bg-slate-100"
+      >
+        <User size={18} />
+        Profile
+      </Link>
+    </>
+  )}
+
+</div>
+
+    {/* Auth Section */}
+    <div className="p-4 border-t border-slate-100">
+  {!user ? (
+    <div className="grid grid-cols-2 gap-3">
+      <Link
+        href="/login"
+        onClick={() => setIsMenuOpen(false)}
+      >
+        <button className="w-full py-3 rounded-xl border border-slate-200 font-semibold text-slate-700 hover:bg-slate-50">
+          Login
+        </button>
+      </Link>
+
+      <Link
+        href="/register"
+        onClick={() => setIsMenuOpen(false)}
+      >
+        <button className="w-full py-3 rounded-xl bg-[#132573] text-white font-semibold hover:bg-[#0f1f5c]">
+          Join Us
+        </button>
+      </Link>
+    </div>
+  ) : (
+    <button
+      onClick={async () => {
+        setIsMenuOpen(false);
+        await handleLogout();
+      }}
+      className="w-full py-3 rounded-xl bg-red-50 text-red-600 font-semibold flex items-center justify-center gap-2 hover:bg-red-100 transition"
+    >
+      <LogOut size={18} />
+      Logout
+    </button>
+  )}
+</div>
+
+  </div>
+)}
+    </nav>
   );
 }
